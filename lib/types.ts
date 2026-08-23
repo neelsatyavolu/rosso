@@ -69,7 +69,7 @@ export const RESERVED_NAMES = new Set([
   "cpu",
   "bot",
   "admin",
-  "flash",
+  "sixty",
   "system",
   "pace",
 ]);

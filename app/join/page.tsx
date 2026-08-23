@@ -41,7 +41,7 @@ export default function JoinPage() {
       <a href="/" className="mb-12 flex items-center gap-3">
         <Mark className="h-5" />
         <span className="font-display text-[13px] font-semibold uppercase tracking-[0.65px]">
-          Flash
+          Sixty
         </span>
       </a>
       <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">

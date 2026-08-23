@@ -4,9 +4,9 @@ import { BOT_ID, BOT_NAME, START_RATING, type DB, type User } from "./types";
 
 const FILE = path.join(
   process.env.VERCEL ? "/tmp" : process.cwd(),
-  process.env.VERCEL ? "flash-db.json" : ".data/db.json",
+  process.env.VERCEL ? "sixty-db.json" : ".data/db.json",
 );
-const BLOB_PATH = "flash-db.json";
+const BLOB_PATH = "sixty-db.json";
 
 function emptyDb(): DB {
   const bot: User = {

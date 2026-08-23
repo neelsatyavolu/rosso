@@ -97,7 +97,7 @@ export default function Landing() {
 
       <footer className="gutter-x border-t border-hairline py-16 text-[13px] text-body">
         <div className="mx-auto flex max-w-[1280px] flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <span>FLASH</span>
+          <span>SIXTY</span>
           <span>Same problems. Fastest mind.</span>
         </div>
       </footer>

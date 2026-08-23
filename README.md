@@ -1,4 +1,4 @@
-# FLASH
+# SIXTY
 
 Sixty-second mental math 1v1. Same problems. Most correct wins.
 

@@ -15,7 +15,7 @@ const condensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "FLASH",
+  title: "SIXTY",
   description:
     "Sixty seconds. Same problems. First across the line. Sign up, friend people, and race them in mental math.",
 };
