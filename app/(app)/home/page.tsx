@@ -28,16 +28,16 @@ export default function HomePage() {
         {data.me.username}
       </h1>
       <div className="mt-10 grid gap-px border-y border-hairline bg-hairline md:grid-cols-4">
-        <div className="bg-canvas px-2">
+        <div className="bg-canvas pr-6">
           <Spec value={data.me.rating} label="Elo" accent />
         </div>
-        <div className="bg-canvas px-2">
+        <div className="bg-canvas pr-6">
           <Spec value={data.me.wins} label="Wins" />
         </div>
-        <div className="bg-canvas px-2">
+        <div className="bg-canvas pr-6">
           <Spec value={data.me.losses} label="Losses" />
         </div>
-        <div className="bg-canvas px-2">
+        <div className="bg-canvas pr-6">
           <Spec value={data.me.draws} label="Draws" />
         </div>
       </div>

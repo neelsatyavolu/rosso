@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     "Sixty seconds. Same problems. First across the line. Sign up, friend drivers, and race them in mental math.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html

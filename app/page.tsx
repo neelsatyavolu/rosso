@@ -16,7 +16,7 @@ export default function Landing() {
           className="object-cover object-[20%_center] outline outline-1 outline-white/10"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(24,24,24,0.15)_0%,rgba(24,24,24,0.35)_45%,#181818_92%)]" />
-        <div className="relative mx-auto flex min-h-[88vh] max-w-[1280px] flex-col justify-end px-4 pb-16 pt-32 md:px-8 md:pb-24">
+        <div className="gutter-x relative mx-auto flex min-h-[88vh] max-w-[1280px] flex-col justify-end pt-32 pb-16 md:pb-24">
           <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-white/80">
             Mental math · 60-second sprint
           </p>
@@ -40,7 +40,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="bg-primary px-4 py-24 text-white md:px-8">
+      <section className="gutter-x bg-primary py-24 text-white">
         <div className="mx-auto grid max-w-[1280px] gap-8 md:grid-cols-4">
           <Spec value="60s" label="The race" />
           <Spec value="1v1" label="Same problems" />
@@ -49,7 +49,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1280px] px-4 py-24 md:px-8">
+      <section className="gutter-x mx-auto max-w-[1280px] py-24">
         <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
           How a lap works
         </p>
@@ -85,7 +85,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="border-t border-hairline px-4 py-24 text-center md:px-8">
+      <section className="gutter-x border-t border-hairline py-24 text-center">
         <Mark className="mx-auto h-8" />
         <h2 className="mx-auto mt-8 max-w-2xl font-display text-[36px] font-medium tracking-[-0.36px] text-balance">
           Lights out, and away we go.
@@ -95,7 +95,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <footer className="border-t border-hairline px-4 py-16 text-[13px] text-body md:px-8">
+      <footer className="gutter-x border-t border-hairline py-16 text-[13px] text-body">
         <div className="mx-auto flex max-w-[1280px] flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <span>ROSSO · mental math 1v1</span>
           <span>Same problems. Fastest mind.</span>

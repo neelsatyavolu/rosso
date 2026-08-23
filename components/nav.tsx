@@ -31,8 +31,8 @@ export function SiteNav({
   }
 
   return (
-    <header className="sticky top-0 z-40 h-16 border-b border-hairline bg-canvas/95 backdrop-blur">
-      <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-4 md:px-8">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur">
+      <div className="gutter-x mx-auto flex h-16 max-w-[1280px] items-center justify-between">
         <Link href={showApp ? "/home" : "/"} className="flex items-center gap-3">
           <Mark className="h-5" />
           <span className="font-display text-[13px] font-semibold uppercase tracking-[0.65px]">
@@ -81,7 +81,7 @@ export function SiteNav({
 
 export function MobileDock({ pathname }: { pathname: string }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-4 border-t border-hairline bg-canvas md:hidden">
+    <nav className="fixed right-0 bottom-0 left-0 z-40 grid grid-cols-4 border-t border-hairline bg-canvas pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] md:hidden">
       {LINKS.map((l) => (
         <Link
           key={l.href}

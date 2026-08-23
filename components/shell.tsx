@@ -12,9 +12,9 @@ export function Shell({
 }) {
   const pathname = usePathname();
   return (
-    <div className="min-h-full bg-canvas pb-16 md:pb-0">
+    <div className="min-h-full min-h-dvh bg-canvas pb-[calc(72px+env(safe-area-inset-bottom,0px))] md:pb-0">
       <SiteNav username={username} signedIn />
-      <div className="mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-16">
+      <div className="gutter-x mx-auto max-w-[1280px] py-10 md:py-16">
         {children ?? null}
       </div>
       <MobileDock pathname={pathname} />

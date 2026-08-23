@@ -37,7 +37,7 @@ export default function JoinPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-full max-w-[440px] flex-col justify-center px-4 py-16">
+    <main className="gutter mx-auto flex min-h-dvh max-w-[440px] flex-col justify-center">
       <a href="/" className="mb-12 flex items-center gap-3">
         <Mark className="h-5" />
         <span className="font-display text-[13px] font-semibold uppercase tracking-[0.65px]">

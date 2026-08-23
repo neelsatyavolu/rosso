@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Button, Mark } from "@/components/ui";
 import type { PublicUser } from "@/lib/types";
 
+type ProblemBit = { prompt: string; answer: number; index: number };
+
 type DuelView = {
   id: string;
   kind: string;
@@ -20,7 +22,8 @@ type DuelView = {
   winnerId: string | null;
   ratingDelta: { host: number; guest: number } | null;
   yourIndex: number;
-  problem: { prompt: string; index: number } | null;
+  problem: ProblemBit | null;
+  ahead: ProblemBit[];
 };
 
 type Payload = {
@@ -30,22 +33,30 @@ type Payload = {
   youAreHost: boolean;
 };
 
+type Live = {
+  prompt: string;
+  answer: number;
+  index: number;
+  youScore: number;
+  queue: ProblemBit[];
+};
+
 export default function RacePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [payload, setPayload] = useState<Payload | null>(null);
+  const [live, setLive] = useState<Live | null>(null);
   const [value, setValue] = useState("");
   const [now, setNow] = useState(Date.now());
   const [wrong, setWrong] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const submitting = useRef(false);
-  const payloadRef = useRef(payload);
-  const pending = useRef<string | null>(null);
-  payloadRef.current = payload;
+  const liveRef = useRef<Live | null>(null);
+  const postChain = useRef(Promise.resolve());
+  liveRef.current = live;
 
   useEffect(() => {
     let gone = false;
-    let timer: number;
+    let timer = 0;
     const tick = async () => {
       const res = await fetch(`/api/duels/${id}`, { cache: "no-store" });
       if (res.status === 401 || res.status === 403 || res.status === 404) {
@@ -59,10 +70,33 @@ export default function RacePage() {
       const json = (await res.json()) as Payload;
       if (gone) return;
       setPayload(json);
+      const local = liveRef.current;
+      if (json.duel.status === "live" && json.duel.ahead.length) {
+        const localIndex = local?.index ?? -1;
+        if (!local || json.duel.yourIndex > localIndex) {
+          const queue = json.duel.ahead;
+          const first = queue[0];
+          setLive({
+            prompt: first.prompt,
+            answer: first.answer,
+            index: first.index,
+            youScore: json.youAreHost
+              ? json.duel.hostScore
+              : json.duel.guestScore,
+            queue,
+          });
+        } else if (local && json.duel.ahead[0]) {
+          const rest = json.duel.ahead.filter((p) => p.index >= local.index);
+          if (rest.length > local.queue.length) {
+            setLive({ ...local, queue: rest });
+          }
+        }
+      }
+      if (json.duel.status !== "live") setLive(null);
       setNow(Date.now());
       timer = window.setTimeout(
         tick,
-        json.duel.status === "live" ? 400 : 900,
+        json.duel.status === "live" ? 500 : 900,
       );
     };
     void tick();
@@ -76,41 +110,7 @@ export default function RacePage() {
 
   useEffect(() => {
     if (payload?.duel.status === "live") inputRef.current?.focus();
-  }, [payload?.duel.status, payload?.duel.problem?.index]);
-
-  async function submit(raw: string) {
-    pending.current = raw;
-    if (submitting.current) return;
-    submitting.current = true;
-    try {
-      while (pending.current) {
-        const current = payloadRef.current;
-        const sending = pending.current;
-        pending.current = null;
-        if (!current?.duel.problem || sending === "") break;
-        const res = await fetch(`/api/duels/${id}/answer`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            index: current.duel.problem.index,
-            value: sending,
-          }),
-        });
-        const json = (await res.json()) as {
-          duel?: DuelView;
-          correct?: boolean;
-        };
-        if (json.duel) {
-          setPayload((p) => (p ? { ...p, duel: json.duel! } : p));
-        }
-        if (json.correct) {
-          setValue((v) => (v === sending ? "" : v));
-        }
-      }
-    } finally {
-      submitting.current = false;
-    }
-  }
+  }, [payload?.duel.status, live?.index]);
 
   async function act(action: "accept" | "decline" | "cancel") {
     await fetch(`/api/duels/${id}`, {
@@ -120,9 +120,44 @@ export default function RacePage() {
     });
   }
 
+  function postAnswer(index: number, raw: string) {
+    postChain.current = postChain.current.then(async () => {
+      const res = await fetch(`/api/duels/${id}/answer`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ index, value: raw }),
+      });
+      const json = (await res.json().catch(() => null)) as {
+        duel?: DuelView;
+      } | null;
+      if (json?.duel) {
+        setPayload((p) => (p ? { ...p, duel: json.duel! } : p));
+      }
+    });
+  }
+
+  function tryAdvance(raw: string) {
+    const cur = liveRef.current;
+    if (!cur || raw === "") return;
+    if (Number(raw) !== cur.answer) return;
+    const rest = cur.queue.slice(1);
+    const next = rest[0];
+    const solvedIndex = cur.index;
+    setValue("");
+    setLive({
+      prompt: next?.prompt ?? cur.prompt,
+      answer: next?.answer ?? cur.answer,
+      index: next?.index ?? cur.index + 1,
+      youScore: cur.youScore + 1,
+      queue: rest,
+    });
+    postAnswer(solvedIndex, raw);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
   if (!payload) {
     return (
-      <main className="flex min-h-full items-center justify-center text-body">
+      <main className="gutter flex min-h-dvh items-center justify-center text-body">
         Forming up on the grid…
       </main>
     );
@@ -131,7 +166,14 @@ export default function RacePage() {
   const { duel, host, guest, youAreHost } = payload;
   const you = youAreHost ? host : guest;
   const them = youAreHost ? guest : host;
-  const youScore = youAreHost ? duel.hostScore : duel.guestScore;
+  const youScore = live
+    ? Math.max(
+        live.youScore,
+        youAreHost ? duel.hostScore : duel.guestScore,
+      )
+    : youAreHost
+      ? duel.hostScore
+      : duel.guestScore;
   const themScore = youAreHost ? duel.guestScore : duel.hostScore;
 
   const remain = duel.endsAt
@@ -144,10 +186,12 @@ export default function RacePage() {
 
   if (duel.status === "waiting") {
     return (
-      <main className="mx-auto flex min-h-full max-w-xl flex-col justify-center px-4">
+      <main className="gutter mx-auto flex min-h-dvh max-w-xl flex-col justify-center">
         <Mark className="h-6" />
         <h1 className="mt-8 font-display text-[36px] font-medium tracking-[-0.36px]">
-          {youAreHost ? "Waiting on the other side of the garage." : "You’ve been called to the grid."}
+          {youAreHost
+            ? "Waiting on the other side of the garage."
+            : "You’ve been called to the grid."}
         </h1>
         <p className="mt-4 text-body">
           {youAreHost
@@ -156,13 +200,13 @@ export default function RacePage() {
         </p>
         <div className="mt-10 flex gap-4">
           {youAreHost ? (
-            <Button variant="outline" onClick={() => act("cancel")}>
+            <Button variant="outline" onClick={() => void act("cancel")}>
               Withdraw
             </Button>
           ) : (
             <>
-              <Button onClick={() => act("accept")}>Accept</Button>
-              <Button variant="outline" onClick={() => act("decline")}>
+              <Button onClick={() => void act("accept")}>Accept</Button>
+              <Button variant="outline" onClick={() => void act("decline")}>
                 Decline
               </Button>
             </>
@@ -174,7 +218,7 @@ export default function RacePage() {
 
   if (duel.status === "countdown") {
     return (
-      <main className="flex min-h-full flex-col items-center justify-center">
+      <main className="gutter flex min-h-dvh flex-col items-center justify-center">
         <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
           Get ready — same problems, fastest wins
         </p>
@@ -195,7 +239,7 @@ export default function RacePage() {
       ? duel.ratingDelta?.host
       : duel.ratingDelta?.guest;
     return (
-      <main className="mx-auto flex min-h-full max-w-2xl flex-col justify-center px-4">
+      <main className="gutter mx-auto flex min-h-dvh max-w-2xl flex-col justify-center">
         <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
           Chequered flag
         </p>
@@ -204,13 +248,13 @@ export default function RacePage() {
         </h1>
         <div className="mt-10 grid grid-cols-2 gap-px bg-hairline">
           <div className="bg-canvas p-6">
-            <div className="font-display text-[80px] font-bold leading-none tracking-[-1.6px] text-primary tabular">
+            <div className="font-display tabular text-[80px] font-bold leading-none tracking-[-1.6px] text-primary">
               {youScore}
             </div>
             <div className="mt-2 text-body">{you?.username ?? "You"}</div>
           </div>
           <div className="bg-canvas p-6">
-            <div className="font-display text-[80px] font-bold leading-none tracking-[-1.6px] tabular">
+            <div className="font-display tabular text-[80px] font-bold leading-none tracking-[-1.6px]">
               {themScore}
             </div>
             <div className="mt-2 text-body">{them?.username ?? "PACE"}</div>
@@ -235,8 +279,8 @@ export default function RacePage() {
   }
 
   return (
-    <main className="flex min-h-full flex-col">
-      <header className="flex items-center justify-between border-b border-hairline px-4 py-4 md:px-8">
+    <main className="flex min-h-dvh flex-col">
+      <header className="gutter-x flex items-center justify-between border-b border-hairline pt-[max(20px,env(safe-area-inset-top,0px))] pb-5">
         <div className="font-display tabular text-[48px] font-bold leading-none tracking-[-1px] md:text-[64px]">
           {remain}s
         </div>
@@ -262,28 +306,31 @@ export default function RacePage() {
           </div>
         </div>
       </header>
-      <div className="flex flex-1 flex-col items-center justify-center px-4">
+      <div className="gutter-x flex flex-1 flex-col items-center justify-center pb-[max(32px,env(safe-area-inset-bottom,0px))]">
         <div className="font-display text-[64px] font-medium leading-none tracking-[-1.6px] md:text-[96px]">
-          {duel.problem?.prompt ?? "—"}
+          {live?.prompt ?? duel.problem?.prompt ?? "—"}
         </div>
         <input
           ref={inputRef}
           aria-label="Your answer"
           inputMode="numeric"
           autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
           value={value}
           onChange={(e) => {
             const next = e.target.value.replace(/[^\d-]/g, "");
             setValue(next);
-            if (next !== "") void submit(next);
+            tryAdvance(next);
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              if (!value) return;
-              setWrong(true);
-              window.setTimeout(() => setWrong(false), 180);
-              void submit(value);
+            if (e.key !== "Enter" || !value) return;
+            if (live && Number(value) === live.answer) {
+              tryAdvance(value);
+              return;
             }
+            setWrong(true);
+            window.setTimeout(() => setWrong(false), 180);
           }}
           className={`mt-12 w-full max-w-md border-b bg-transparent pb-3 text-center font-display text-[40px] font-bold tabular outline-none ${wrong ? "border-primary text-primary" : "border-hairline text-ink"}`}
         />
