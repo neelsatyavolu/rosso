@@ -1,5 +1,8 @@
+"use client";
+
 import type { ButtonHTMLAttributes, InputHTMLAttributes } from "react";
 import Link from "next/link";
+import { isAppTab, useTabOptional } from "@/lib/tabs";
 
 export function Mark({ className = "h-6" }: { className?: string }) {
   return (
@@ -35,9 +38,18 @@ export function Button({
   href?: string;
 }) {
   const cls = `${btnBase} ${btnStyles[variant]} ${className}`;
+  const tabs = useTabOptional();
   if (href) {
     return (
-      <Link href={href} prefetch scroll={false} className={cls}>
+      <Link
+        href={href}
+        prefetch
+        scroll={false}
+        onClick={() => {
+          if (isAppTab(href)) tabs?.select(href);
+        }}
+        className={cls}
+      >
         {props.children}
       </Link>
     );

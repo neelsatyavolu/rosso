@@ -18,4 +18,4 @@ npm run dev
 
 ## Vercel
 
-Needs `AUTH_SECRET` and `BLOB_READ_WRITE_TOKEN` so duels persist across serverless instances.
+Needs `AUTH_SECRET` and `DATABASE_URL` (Postgres) so accounts persist.

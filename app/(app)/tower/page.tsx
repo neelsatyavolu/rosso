@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useGarage } from "@/lib/use-garage";
+import { useTabOptional } from "@/lib/tabs";
 import type { PublicUser } from "@/lib/types";
 
 type Row = PublicUser & { position: number };
 
 export default function TowerPage() {
   const data = useGarage();
+  const tab = useTabOptional()?.tab;
   const [rows, setRows] = useState<Row[] | null>(null);
 
   useEffect(() => {
+    if (tab && tab !== "/tower") return;
     let gone = false;
     fetch("/api/leaderboard")
       .then((r) => r.json())
@@ -20,7 +23,7 @@ export default function TowerPage() {
     return () => {
       gone = true;
     };
-  }, []);
+  }, [tab]);
 
   if (!data) return null;
 

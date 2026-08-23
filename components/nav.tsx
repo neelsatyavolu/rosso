@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearGarageCache } from "@/lib/use-garage";
+import { useTabOptional } from "@/lib/tabs";
 import { Button, Mark } from "./ui";
 
 const LINKS = [
@@ -21,6 +22,8 @@ export function SiteNav({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const tabs = useTabOptional();
+  const current = tabs?.tab ?? pathname;
   const showApp = signedIn || Boolean(username);
 
   async function logout() {
@@ -48,7 +51,8 @@ export function SiteNav({
                   href={l.href}
                   prefetch
                   scroll={false}
-                  className={`font-display text-[13px] font-semibold uppercase tracking-[0.65px] ${pathname.startsWith(l.href) ? "text-ink" : "text-body hover:text-ink"}`}
+                  onClick={() => tabs?.select(l.href)}
+                  className={`font-display text-[13px] font-semibold uppercase tracking-[0.65px] ${current.startsWith(l.href) ? "text-ink" : "text-body hover:text-ink"}`}
                 >
                   {l.label}
                 </Link>
@@ -80,6 +84,8 @@ export function SiteNav({
 }
 
 export function MobileDock({ pathname }: { pathname: string }) {
+  const tabs = useTabOptional();
+  const current = tabs?.tab ?? pathname;
   return (
     <nav className="fixed right-0 bottom-0 left-0 z-40 grid grid-cols-4 border-t border-hairline bg-canvas pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] md:hidden">
       {LINKS.map((l) => (
@@ -88,7 +94,8 @@ export function MobileDock({ pathname }: { pathname: string }) {
           href={l.href}
           prefetch
           scroll={false}
-          className={`flex h-14 items-center justify-center font-display text-[11px] font-semibold uppercase tracking-[1.1px] ${pathname.startsWith(l.href) ? "text-ink" : "text-body"}`}
+          onClick={() => tabs?.select(l.href)}
+          className={`flex h-14 items-center justify-center font-display text-[11px] font-semibold uppercase tracking-[1.1px] ${current.startsWith(l.href) ? "text-ink" : "text-body"}`}
         >
           {l.label}
         </Link>
