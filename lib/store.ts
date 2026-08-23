@@ -25,7 +25,19 @@ function emptyDb(): DB {
 }
 
 function useBlob() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN && process.env.VERCEL,
+  );
+}
+
+function isConflict(err: unknown) {
+  const name =
+    err instanceof Error ? err.constructor.name : "";
+  const msg = err instanceof Error ? err.message : String(err);
+  return (
+    name === "BlobPreconditionFailedError" ||
+    /etag|precondition failed/i.test(msg)
+  );
 }
 
 let chain: Promise<unknown> = Promise.resolve();
@@ -39,11 +51,7 @@ export function mutate<T>(fn: (db: DB) => T | Promise<T>): Promise<T> {
         await save(db, etag);
         return result;
       } catch (err) {
-        const name = (err as { name?: string; constructor?: { name?: string } })
-          ?.constructor?.name;
-        if (name === "BlobPreconditionFailedError" && attempt < 5) {
-          continue;
-        }
+        if (isConflict(err) && attempt < 5) continue;
         throw err;
       }
     }

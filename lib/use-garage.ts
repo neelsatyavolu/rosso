@@ -25,7 +25,12 @@ export function useGarage(redirectToRace = true) {
     const tick = async () => {
       const res = await fetch("/api/me", { cache: "no-store" });
       if (res.status === 401) {
+        await fetch("/api/auth/logout", { method: "POST" });
         router.push("/join");
+        return;
+      }
+      if (!res.ok) {
+        timer = window.setTimeout(tick, 1200);
         return;
       }
       const json = (await res.json()) as Garage;

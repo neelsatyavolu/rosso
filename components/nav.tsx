@@ -60,9 +60,7 @@ export function SiteNav({ username }: { username?: string }) {
             >
               Enter
             </Link>
-            <Link href="/join">
-              <Button>Take a seat</Button>
-            </Link>
+            <Button href="/join">Take a seat</Button>
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readSessionId, toPublic } from "./auth";
+import { clearSessionCookie, readSessionId } from "./auth";
 import { mutate } from "./store";
 import { BOT_ID, type User } from "./types";
 import { syncDuel } from "./game";
@@ -17,18 +17,15 @@ export async function requireUser(): Promise<
   const user = await mutate((db) => {
     const u = db.users.find((x) => x.id === id);
     if (!u || u.id === BOT_ID) return null;
-    u.lastSeen = now;
+    if (now - u.lastSeen > 4000) u.lastSeen = now;
     for (const duel of db.duels) syncDuel(db, duel, now);
     return u;
   });
   if (!user) {
+    await clearSessionCookie();
     return {
       error: NextResponse.json({ error: "Account missing." }, { status: 401 }),
     };
   }
   return { user };
-}
-
-export function jsonUser(user: User) {
-  return toPublic(user);
 }

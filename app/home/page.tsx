@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 import { Button, Spec } from "@/components/ui";
@@ -73,12 +72,10 @@ export default function HomePage() {
       ) : null}
 
       <section className="mt-16 flex flex-wrap gap-4">
-        <Link href="/grid">
-          <Button>Go to grid</Button>
-        </Link>
-        <Link href="/friends">
-          <Button variant="outline">Open stable</Button>
-        </Link>
+        <Button href="/grid">Go to grid</Button>
+        <Button href="/friends" variant="outline">
+          Open stable
+        </Button>
       </section>
 
       <section className="mt-16">

@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes } from "react";
+import Link from "next/link";
 
 export function Mark({ className = "h-6" }: { className?: string }) {
   return (
@@ -14,22 +15,34 @@ export function Mark({ className = "h-6" }: { className?: string }) {
   );
 }
 
+const btnBase =
+  "inline-flex items-center justify-center h-12 px-8 text-[14px] font-bold uppercase tracking-[1.4px] rounded-none cursor-pointer transition-[transform,background-color,color,border-color,opacity] duration-150 active:scale-[0.96] disabled:opacity-40 disabled:pointer-events-none";
+
+const btnStyles = {
+  primary: "bg-primary text-white hover:bg-primary-active",
+  outline:
+    "bg-transparent text-ink border border-white hover:bg-white hover:text-canvas",
+  ghost: "bg-transparent text-ink px-0 hover:text-primary",
+};
+
 export function Button({
   variant = "primary",
   className = "",
+  href,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "outline" | "ghost";
+  href?: string;
 }) {
-  const base =
-    "inline-flex items-center justify-center h-12 px-8 text-[14px] font-bold uppercase tracking-[1.4px] rounded-none cursor-pointer transition-[transform,background-color,color,border-color,opacity] duration-150 active:scale-[0.96] disabled:opacity-40 disabled:pointer-events-none";
-  const styles = {
-    primary: "bg-primary text-white hover:bg-primary-active",
-    outline:
-      "bg-transparent text-ink border border-white hover:bg-white hover:text-canvas",
-    ghost: "bg-transparent text-ink px-0 hover:text-primary",
-  }[variant];
-  return <button className={`${base} ${styles} ${className}`} {...props} />;
+  const cls = `${btnBase} ${btnStyles[variant]} ${className}`;
+  if (href) {
+    return (
+      <Link href={href} className={cls}>
+        {props.children}
+      </Link>
+    );
+  }
+  return <button className={cls} {...props} />;
 }
 
 export function Field({

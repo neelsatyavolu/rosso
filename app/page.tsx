@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Button, Mark, Spec } from "@/components/ui";
 import { SiteNav } from "@/components/nav";
 
@@ -33,12 +32,10 @@ export default function Landing() {
             lap of arithmetic — most correct wins. Elo, K=32.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/join">
-              <Button>Enter the grid</Button>
-            </Link>
-            <Link href="/join">
-              <Button variant="outline">Take a seat</Button>
-            </Link>
+            <Button href="/join">Enter the grid</Button>
+            <Button href="/join" variant="outline">
+              Take a seat
+            </Button>
           </div>
         </div>
       </section>
@@ -94,9 +91,7 @@ export default function Landing() {
           Lights out, and away we go.
         </h2>
         <div className="mt-10">
-          <Link href="/join">
-            <Button>Enter the grid</Button>
-          </Link>
+          <Button href="/join">Enter the grid</Button>
         </div>
       </section>
 

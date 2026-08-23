@@ -48,8 +48,12 @@ export default function RacePage() {
     let timer: number;
     const tick = async () => {
       const res = await fetch(`/api/duels/${id}`, { cache: "no-store" });
-      if (!res.ok) {
+      if (res.status === 401 || res.status === 403 || res.status === 404) {
         router.push("/grid");
+        return;
+      }
+      if (!res.ok) {
+        timer = window.setTimeout(tick, 600);
         return;
       }
       const json = (await res.json()) as Payload;
