@@ -37,7 +37,7 @@ export function Button({
   const cls = `${btnBase} ${btnStyles[variant]} ${className}`;
   if (href) {
     return (
-      <Link href={href} className={cls}>
+      <Link href={href} prefetch scroll={false} className={cls}>
         {props.children}
       </Link>
     );

@@ -1,24 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shell } from "@/components/shell";
 import { useGarage } from "@/lib/use-garage";
 import type { PublicUser } from "@/lib/types";
 
 type Row = PublicUser & { position: number };
 
 export default function TowerPage() {
-  const data = useGarage(false);
-  const [rows, setRows] = useState<Row[]>([]);
+  const data = useGarage();
+  const [rows, setRows] = useState<Row[] | null>(null);
 
   useEffect(() => {
+    let gone = false;
     fetch("/api/leaderboard")
       .then((r) => r.json())
-      .then((j: { rows: Row[] }) => setRows(j.rows));
+      .then((j: { rows: Row[] }) => {
+        if (!gone) setRows(j.rows);
+      });
+    return () => {
+      gone = true;
+    };
   }, []);
 
+  if (!data) return null;
+
   return (
-    <Shell username={data?.me.username}>
+    <>
       <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
         Timing tower
       </p>
@@ -26,7 +33,7 @@ export default function TowerPage() {
         The order.
       </h1>
       <ol className="mt-12 divide-y divide-hairline border-y border-hairline">
-        {rows.map((r) => (
+        {(rows ?? []).map((r) => (
           <li
             key={r.id}
             className="grid grid-cols-[72px_1fr_auto] items-center py-4 md:grid-cols-[96px_1fr_120px_120px]"
@@ -46,9 +53,9 @@ export default function TowerPage() {
           </li>
         ))}
       </ol>
-      {rows.length === 0 ? (
+      {rows && rows.length === 0 ? (
         <p className="mt-8 text-body">No laps on record yet.</p>
       ) : null}
-    </Shell>
+    </>
   );
 }

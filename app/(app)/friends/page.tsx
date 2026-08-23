@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shell } from "@/components/shell";
 import { Button, Field } from "@/components/ui";
 import { useGarage } from "@/lib/use-garage";
 import type { PublicUser } from "@/lib/types";
@@ -50,16 +49,10 @@ export default function FriendsPage() {
     else setNote(json.error ?? "Could not challenge.");
   }
 
-  if (!data) {
-    return (
-      <Shell>
-        <p className="text-body">Loading stable…</p>
-      </Shell>
-    );
-  }
+  if (!data) return null;
 
   return (
-    <Shell username={data.me.username}>
+    <>
       <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
         Stable
       </p>
@@ -140,6 +133,6 @@ export default function FriendsPage() {
           </ul>
         )}
       </section>
-    </Shell>
+    </>
   );
 }

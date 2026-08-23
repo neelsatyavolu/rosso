@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui";
 import { useGarage } from "@/lib/use-garage";
 
@@ -21,16 +20,10 @@ export default function GridPage() {
     if (json.duel) router.push(`/race/${json.duel.id}`);
   }
 
-  if (!data) {
-    return (
-      <Shell>
-        <p className="text-body">Rolling to the grid…</p>
-      </Shell>
-    );
-  }
+  if (!data) return null;
 
   return (
-    <Shell username={data.me.username}>
+    <>
       <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
         Grid
       </p>
@@ -42,9 +35,7 @@ export default function GridPage() {
         Queue waits 10 seconds, then PACE rolls out if nobody else is looking.
       </p>
       <div className="mt-12 flex flex-wrap gap-4">
-        <Button onClick={() => start("queue")}>
-          Find a match
-        </Button>
+        <Button onClick={() => start("queue")}>Find a match</Button>
         <Button variant="outline" onClick={() => start("practice")}>
           Practice lap
         </Button>
@@ -55,7 +46,9 @@ export default function GridPage() {
           Challenge the stable
         </p>
         {data.friends.length === 0 ? (
-          <p className="mt-4 text-body">Add friends first — then put them on the grid.</p>
+          <p className="mt-4 text-body">
+            Add friends first — then put them on the grid.
+          </p>
         ) : (
           <ul className="mt-4 max-w-xl divide-y divide-hairline border-y border-hairline">
             {data.friends.map((f) => (
@@ -77,6 +70,6 @@ export default function GridPage() {
           </ul>
         )}
       </section>
-    </Shell>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { clearGarageCache } from "@/lib/use-garage";
 import { Button, Mark } from "./ui";
 
 const LINKS = [
@@ -11,11 +12,19 @@ const LINKS = [
   { href: "/tower", label: "Tower" },
 ];
 
-export function SiteNav({ username }: { username?: string }) {
+export function SiteNav({
+  username,
+  signedIn = false,
+}: {
+  username?: string;
+  signedIn?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
+  const showApp = signedIn || Boolean(username);
 
   async function logout() {
+    clearGarageCache();
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
     router.refresh();
@@ -24,19 +33,21 @@ export function SiteNav({ username }: { username?: string }) {
   return (
     <header className="sticky top-0 z-40 h-16 border-b border-hairline bg-canvas/95 backdrop-blur">
       <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-4 md:px-8">
-        <Link href={username ? "/home" : "/"} className="flex items-center gap-3">
+        <Link href={showApp ? "/home" : "/"} className="flex items-center gap-3">
           <Mark className="h-5" />
           <span className="font-display text-[13px] font-semibold uppercase tracking-[0.65px]">
             Rosso
           </span>
         </Link>
-        {username ? (
+        {showApp ? (
           <>
             <nav className="hidden items-center gap-8 md:flex">
               {LINKS.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
+                  prefetch
+                  scroll={false}
                   className={`font-display text-[13px] font-semibold uppercase tracking-[0.65px] ${pathname.startsWith(l.href) ? "text-ink" : "text-body hover:text-ink"}`}
                 >
                   {l.label}
@@ -75,6 +86,8 @@ export function MobileDock({ pathname }: { pathname: string }) {
         <Link
           key={l.href}
           href={l.href}
+          prefetch
+          scroll={false}
           className={`flex h-14 items-center justify-center font-display text-[11px] font-semibold uppercase tracking-[1.1px] ${pathname.startsWith(l.href) ? "text-ink" : "text-body"}`}
         >
           {l.label}

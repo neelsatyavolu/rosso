@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Shell } from "@/components/shell";
 import { Button, Spec } from "@/components/ui";
 import { useGarage } from "@/lib/use-garage";
 
@@ -18,16 +17,10 @@ export default function HomePage() {
     router.push(`/race/${id}`);
   }
 
-  if (!data) {
-    return (
-      <Shell>
-        <p className="text-body">Warming the garage…</p>
-      </Shell>
-    );
-  }
+  if (!data) return null;
 
   return (
-    <Shell username={data.me.username}>
+    <>
       <p className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
         Garage
       </p>
@@ -102,6 +95,6 @@ export default function HomePage() {
           </ul>
         )}
       </section>
-    </Shell>
+    </>
   );
 }
