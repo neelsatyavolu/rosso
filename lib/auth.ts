@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { BOT_ID, ONLINE_MS, type PublicUser, type User } from "./types";
 
-const COOKIE = "rosso_session";
+const COOKIE = "flash_session";
 
 function secret() {
   const s = process.env.AUTH_SECRET;

@@ -10,7 +10,7 @@ function secret() {
 }
 
 async function authed(req: NextRequest) {
-  const token = req.cookies.get("rosso_session")?.value;
+  const token = req.cookies.get("flash_session")?.value;
   const key = secret();
   if (!token || !key) return false;
   try {

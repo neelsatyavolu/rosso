@@ -57,7 +57,7 @@ export default function FriendsPage() {
         Stable
       </p>
       <h1 className="mt-3 font-display text-[36px] font-medium tracking-[-0.36px] md:text-[56px]">
-        Find drivers.
+        Find players.
       </h1>
       <form onSubmit={search} className="mt-10 flex max-w-xl items-end gap-4">
         <div className="flex-1">

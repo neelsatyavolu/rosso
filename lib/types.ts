@@ -63,7 +63,16 @@ export type DB = {
   duels: Duel[];
 };
 
-export const BOT_ID = "bot-pace";
+export const BOT_ID = "bot-cpu";
+export const BOT_NAME = "CPU";
+export const RESERVED_NAMES = new Set([
+  "cpu",
+  "bot",
+  "admin",
+  "flash",
+  "system",
+  "pace",
+]);
 export const ONLINE_MS = 15_000;
 export const DUEL_MS = 60_000;
 export const COUNTDOWN_MS = 3_000;

@@ -1,17 +1,17 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { BOT_ID, START_RATING, type DB, type User } from "./types";
+import { BOT_ID, BOT_NAME, START_RATING, type DB, type User } from "./types";
 
 const FILE = path.join(
   process.env.VERCEL ? "/tmp" : process.cwd(),
-  process.env.VERCEL ? "rosso-db.json" : ".data/db.json",
+  process.env.VERCEL ? "flash-db.json" : ".data/db.json",
 );
-const BLOB_PATH = "rosso-db.json";
+const BLOB_PATH = "flash-db.json";
 
 function emptyDb(): DB {
   const bot: User = {
     id: BOT_ID,
-    username: "PACE",
+    username: BOT_NAME,
     passwordHash: "",
     rating: 1000,
     wins: 0,
@@ -116,7 +116,7 @@ function ensureBot(db: DB) {
   if (!db.users.some((u) => u.id === BOT_ID)) {
     db.users.push({
       id: BOT_ID,
-      username: "PACE",
+      username: BOT_NAME,
       passwordHash: "",
       rating: START_RATING,
       wins: 0,

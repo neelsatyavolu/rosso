@@ -20,6 +20,7 @@ export async function GET(req: Request) {
         (u) =>
           u.id !== auth.user.id &&
           u.id !== BOT_ID &&
+          u.passwordHash &&
           u.username.includes(q),
       )
       .slice(0, 8)
@@ -36,12 +37,12 @@ export async function POST(req: Request) {
   } | null;
   const userId = body?.userId;
   if (!userId || userId === auth.user.id || userId === BOT_ID) {
-    return NextResponse.json({ error: "Pick a real driver." }, { status: 400 });
+    return NextResponse.json({ error: "Pick a real player." }, { status: 400 });
   }
 
   const result = await mutate((db) => {
     const other = db.users.find((u) => u.id === userId);
-    if (!other) return { error: "No such driver." };
+    if (!other) return { error: "No such player." };
     const existing = db.friendships.find(
       (f) =>
         (f.fromId === auth.user.id && f.toId === userId) ||

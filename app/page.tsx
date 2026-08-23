@@ -28,8 +28,8 @@ export default function Landing() {
             First across the line.
           </h1>
           <p className="mt-6 max-w-xl text-[14px] leading-6 text-white/80">
-            ROSSO is a 1v1 mental math race. You and a friend get the same
-            lap of arithmetic — most correct wins. Elo, K=32.
+            A 1v1 mental math race. You and a friend get the same problems —
+            most correct wins. Elo, K=32.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Button href="/join">Enter the grid</Button>
@@ -54,7 +54,7 @@ export default function Landing() {
           How a lap works
         </p>
         <h2 className="mt-4 max-w-2xl font-display text-[36px] font-medium leading-[1.2] tracking-[-0.36px] text-balance">
-          Sign up. Friend a driver. Put them on the grid.
+          Sign up. Friend someone. Put them on the grid.
         </h2>
         <div className="mt-16 grid gap-px bg-hairline md:grid-cols-3">
           {[
@@ -66,7 +66,7 @@ export default function Landing() {
             {
               n: "02",
               t: "Build a stable",
-              d: "Search drivers, send a request, accept. Online friends show a live mark.",
+              d: "Search a username, send a request, accept. Online friends show a live mark.",
             },
             {
               n: "03",
@@ -97,7 +97,7 @@ export default function Landing() {
 
       <footer className="gutter-x border-t border-hairline py-16 text-[13px] text-body">
         <div className="mx-auto flex max-w-[1280px] flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <span>ROSSO · mental math 1v1</span>
+          <span>FLASH</span>
           <span>Same problems. Fastest mind.</span>
         </div>
       </footer>

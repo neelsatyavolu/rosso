@@ -1,10 +1,10 @@
-# ROSSO
+# FLASH
 
 Sixty-second mental math 1v1. Same problems. Most correct wins.
 
 - Sign up with a username
-- Friend other drivers
-- Challenge them, queue for a ranked match, or run a practice lap against PACE
+- Friend other players
+- Challenge them, queue for a ranked match, or run a practice lap against CPU
 - Elo, K=32
 
 ## Local

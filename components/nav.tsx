@@ -36,7 +36,7 @@ export function SiteNav({
         <Link href={showApp ? "/home" : "/"} className="flex items-center gap-3">
           <Mark className="h-5" />
           <span className="font-display text-[13px] font-semibold uppercase tracking-[0.65px]">
-            Rosso
+            Flash
           </span>
         </Link>
         {showApp ? (

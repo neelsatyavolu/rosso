@@ -31,8 +31,8 @@ export default function GridPage() {
         A 60-second sprint. Same problems. Most correct wins.
       </h1>
       <p className="mt-6 max-w-xl text-body">
-        Ranked matches count toward Elo (K=32). Practice against PACE does not.
-        Queue waits 10 seconds, then PACE rolls out if nobody else is looking.
+        Ranked matches count toward Elo (K=32). Practice against CPU does not.
+        Queue waits 10 seconds, then CPU fills in if nobody else is looking.
       </p>
       <div className="mt-12 flex flex-wrap gap-4">
         <Button onClick={() => start("queue")}>Find a match</Button>

@@ -77,7 +77,7 @@ export default function HomePage() {
         </p>
         {data.friends.filter((f) => f.online).length === 0 ? (
           <p className="mt-4 text-body">
-            No friends on the timing screens. Add drivers in the stable.
+            No friends on the timing screens. Add people in the stable.
           </p>
         ) : (
           <ul className="mt-4 divide-y divide-hairline border-y border-hairline">

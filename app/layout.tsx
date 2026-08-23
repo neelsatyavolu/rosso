@@ -15,9 +15,9 @@ const condensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "ROSSO — mental math 1v1",
+  title: "FLASH",
   description:
-    "Sixty seconds. Same problems. First across the line. Sign up, friend drivers, and race them in mental math.",
+    "Sixty seconds. Same problems. First across the line. Sign up, friend people, and race them in mental math.",
 };
 
 export const viewport = {

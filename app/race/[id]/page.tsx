@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Mark } from "@/components/ui";
-import type { PublicUser } from "@/lib/types";
+import { BOT_NAME, type PublicUser } from "@/lib/types";
 
 type ProblemBit = { prompt: string; answer: number; index: number };
 
@@ -226,7 +226,7 @@ export default function RacePage() {
           {count}
         </div>
         <p className="mt-6 text-body">
-          {you?.username} vs {them?.username ?? "PACE"}
+          {you?.username} vs {them?.username ?? BOT_NAME}
         </p>
       </main>
     );
@@ -257,7 +257,7 @@ export default function RacePage() {
             <div className="font-display tabular text-[80px] font-bold leading-none tracking-[-1.6px]">
               {themScore}
             </div>
-            <div className="mt-2 text-body">{them?.username ?? "PACE"}</div>
+            <div className="mt-2 text-body">{them?.username ?? BOT_NAME}</div>
           </div>
         </div>
         {typeof delta === "number" ? (
@@ -298,7 +298,7 @@ export default function RacePage() {
           </div>
           <div>
             <div className="font-display text-[11px] font-semibold uppercase tracking-[1.1px] text-muted">
-              {them?.username ?? "PACE"}
+              {them?.username ?? BOT_NAME}
             </div>
             <div className="font-display tabular text-[40px] font-bold leading-none">
               {themScore}

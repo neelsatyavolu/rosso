@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { normalizeUsername, setSessionCookie } from "@/lib/auth";
 import { hashPassword } from "@/lib/passwords";
 import { mutate } from "@/lib/store";
-import { START_RATING } from "@/lib/types";
+import { RESERVED_NAMES, START_RATING } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   } | null;
   const username = normalizeUsername(body?.username ?? "");
   const password = body?.password ?? "";
-  if (!/^[a-z0-9_]{3,16}$/.test(username)) {
+  if (!/^[a-z0-9_]{3,16}$/.test(username) || RESERVED_NAMES.has(username)) {
     return NextResponse.json(
       { error: "Username: 3–16 letters, numbers, underscore." },
       { status: 400 },
