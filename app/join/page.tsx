@@ -24,10 +24,12 @@ export default function JoinPage() {
         body: JSON.stringify({ username, password }),
       },
     );
-    const json = (await res.json()) as { error?: string };
+    const json = (await res.json().catch(() => null)) as {
+      error?: string;
+    } | null;
     setBusy(false);
     if (!res.ok) {
-      setError(json.error ?? "Could not enter.");
+      setError(json?.error ?? "Could not enter.");
       return;
     }
     router.push("/home");

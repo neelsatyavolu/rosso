@@ -45,10 +45,10 @@ let chain: Promise<unknown> = Promise.resolve();
 export function mutate<T>(fn: (db: DB) => T | Promise<T>): Promise<T> {
   const run = chain.then(async () => {
     for (let attempt = 0; attempt < 6; attempt++) {
-      const { db, etag } = await load();
+      const { db } = await load();
       const result = await fn(db);
       try {
-        await save(db, etag);
+        await save(db);
         return result;
       } catch (err) {
         if (isConflict(err) && attempt < 5) continue;
@@ -95,7 +95,7 @@ async function load(): Promise<{ db: DB; etag?: string }> {
   }
 }
 
-async function save(db: DB, etag?: string) {
+async function save(db: DB) {
   const body = JSON.stringify(db);
   if (useBlob() && process.env.BLOB_READ_WRITE_TOKEN) {
     const { put } = await import("@vercel/blob");
@@ -105,7 +105,6 @@ async function save(db: DB, etag?: string) {
       allowOverwrite: true,
       cacheControlMaxAge: 0,
       contentType: "application/json",
-      ...(etag ? { ifMatch: etag } : {}),
     });
     return;
   }
