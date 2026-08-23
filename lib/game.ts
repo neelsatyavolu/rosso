@@ -156,7 +156,7 @@ export function publicDuel(duel: Duel, viewerId: string) {
         : null,
     ahead:
       duel.status === "live"
-        ? duel.problems.slice(youIndex, youIndex + 20).map((p, i) => ({
+        ? duel.problems.slice(youIndex).map((p, i) => ({
             prompt: p.prompt,
             answer: p.answer,
             index: youIndex + i,

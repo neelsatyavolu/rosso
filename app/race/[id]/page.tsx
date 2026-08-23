@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Mark } from "@/components/ui";
+import { applyCorrect, type LiveProblem } from "@/lib/advance";
 import { BOT_NAME, type PublicUser } from "@/lib/types";
 
 type ProblemBit = { prompt: string; answer: number; index: number };
@@ -33,13 +34,7 @@ type Payload = {
   youAreHost: boolean;
 };
 
-type Live = {
-  prompt: string;
-  answer: number;
-  index: number;
-  youScore: number;
-  queue: ProblemBit[];
-};
+type Live = LiveProblem;
 
 export default function RacePage() {
   const { id } = useParams<{ id: string }>();
@@ -85,9 +80,14 @@ export default function RacePage() {
               : json.duel.guestScore,
             queue,
           });
-        } else if (local && json.duel.ahead[0]) {
-          const rest = json.duel.ahead.filter((p) => p.index >= local.index);
-          if (rest.length > local.queue.length) {
+        } else if (local && json.duel.ahead.length) {
+          const merged = new Map<number, ProblemBit>();
+          for (const p of local.queue) merged.set(p.index, p);
+          for (const p of json.duel.ahead) {
+            if (p.index >= local.index) merged.set(p.index, p);
+          }
+          const rest = [...merged.values()].sort((a, b) => a.index - b.index);
+          if (rest.length !== local.queue.length) {
             setLive({ ...local, queue: rest });
           }
         }
@@ -138,19 +138,13 @@ export default function RacePage() {
 
   function tryAdvance(raw: string) {
     const cur = liveRef.current;
-    if (!cur || raw === "") return;
-    if (Number(raw) !== cur.answer) return;
-    const rest = cur.queue.slice(1);
-    const next = rest[0];
+    if (!cur) return;
+    const next = applyCorrect(cur, raw);
+    if (!next) return;
     const solvedIndex = cur.index;
+    liveRef.current = next;
     setValue("");
-    setLive({
-      prompt: next?.prompt ?? cur.prompt,
-      answer: next?.answer ?? cur.answer,
-      index: next?.index ?? cur.index + 1,
-      youScore: cur.youScore + 1,
-      queue: rest,
-    });
+    setLive(next);
     postAnswer(solvedIndex, raw);
     requestAnimationFrame(() => inputRef.current?.focus());
   }
@@ -308,7 +302,11 @@ export default function RacePage() {
       </header>
       <div className="gutter-x flex flex-1 flex-col items-center justify-center pb-[max(32px,env(safe-area-inset-bottom,0px))]">
         <div className="font-display text-[64px] font-medium leading-none tracking-[-1.6px] md:text-[96px]">
-          {live?.prompt ?? duel.problem?.prompt ?? "—"}
+          {live
+            ? Number.isFinite(live.answer)
+              ? live.prompt
+              : "—"
+            : (duel.problem?.prompt ?? "—")}
         </div>
         <input
           ref={inputRef}
@@ -325,7 +323,8 @@ export default function RacePage() {
           }}
           onKeyDown={(e) => {
             if (e.key !== "Enter" || !value) return;
-            if (live && Number(value) === live.answer) {
+            const cur = liveRef.current;
+            if (cur && Number(value) === cur.answer) {
               tryAdvance(value);
               return;
             }
