@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const barlow = Barlow({
@@ -32,7 +33,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${barlow.variable} ${condensed.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-canvas text-ink">{children}</body>
+      <body className="min-h-full bg-canvas text-ink">
+        {children}
+        <Script src="https://analytics.n3el.dev/p.js" strategy="afterInteractive" />
+      </body>
     </html>
   );
 }
