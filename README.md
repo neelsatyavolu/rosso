@@ -16,6 +16,8 @@ npm install
 npm run dev
 ```
 
+Without `DATABASE_URL`, data is written to `.data/db.json`.
+
 ## Vercel
 
 Needs `AUTH_SECRET` and `DATABASE_URL` (Postgres) so accounts persist.
